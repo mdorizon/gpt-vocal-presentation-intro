@@ -1,4 +1,5 @@
-const btn = document.querySelector("#start")
+const btn = document.querySelector("#start");
+const dialogBox = document.querySelector('.dialog-box');
 btn.addEventListener("click", () => {
   initGame()
 });
@@ -10,6 +11,9 @@ function vocalQuestionAssistant(responseText){
     var msg = new SpeechSynthesisUtterance();
     msg.text = responseText;
     msg.lang = 'fr-FR';
+    const questionEl = document.createElement('p');
+    questionEl.innerHTML = `Question: <span>${responseText}</span>`;
+    dialogBox.appendChild(questionEl);
 
     // Ajout d'un écouteur pour l'événement 'end' qui résoudra la promesse une fois la parole terminée
     msg.onend = function(event) {
@@ -21,6 +25,7 @@ function vocalQuestionAssistant(responseText){
 }
 
 function vocalResponseRecordUser() {
+  // <p>Réponse: <span id="response"></span></p>
   return new Promise((resolve) => {
     var recognition = new webkitSpeechRecognition();
     recognition.lang = "fr-FR";
@@ -28,9 +33,12 @@ function vocalResponseRecordUser() {
     recognition.onresult = function(event) {
       console.log('***record event***')
       var response = event.results[0][0].transcript;
-      document.getElementById("response").textContent = response;
       response.toLowerCase()
       console.log('response ' + response)
+
+      const responseEl = document.createElement('p');
+      responseEl.innerHTML = `Response: <span>${response}</span>`;
+      dialogBox.appendChild(responseEl);
 
       resolve(response)
     };
@@ -55,4 +63,8 @@ async function initGame(){
   } else {
     initGame();
   }
+  // setTimeout lancement animation du scan et réduis la caméra en bas à gauche
+  setTimeout(() => {
+    console.log('scan en cours...')
+  }, 3000);
 }
